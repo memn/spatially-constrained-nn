@@ -33,27 +33,16 @@ class NeuralNetwork:
         self.errors = [[] for _ in range(train_size)]
         self.layers = [np.matrix([0 for _ in range(size)]).T for size in top]
         self.weights = list()
-        self.costs = list()
         for i, j in zip(top[:-1], top[1:]):
             self.weights.append(np.matrix([[random() * 2 - 1 for _ in range(i + 1)] for _ in range(j)]))
-        self.init_costs()
         self.momentum = 0.3
         self.dw = None
         self.deltas = None
 
-    def init_costs(self):
-        top = self.topology
-        self.costs.clear()
-        value = 1 if random() * 10 < threshold else 0
-        for i, j in zip(top[:-1], top[1:]):
-            self.costs.append(np.matrix([[value for _ in range(i + 1)] for _ in range(j)]))
-
-    def feedforward(self, inputs):
-        assert len(inputs) == self.topology[0]  # matches with input layer
-        self.layers[0] = np.matrix(inputs[:]).T
-        for i in range(len(self.layers) - 1):
-            biased = np.concatenate((self.layers[i], self.costs[i]), axis=0)
-            self.layers[i + 1] = activate(self.weights[i] @ biased)
+    def feedforward(self, a):
+        for q, w in zip(self.costs, self.weights):
+            a = activate(np.dot(w, a) + q)
+        return a
 
     def backprop(self, expected, index):
         deltas = deepcopy(self.layers)

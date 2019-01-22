@@ -2,11 +2,10 @@ import getopt
 import os
 import sys
 
-import matplotlib.pyplot as plt
 import numpy as np
 import scipy
 
-from src.SpatiallyConstrainedNN import NeuralNetwork
+from src.sp_nn import NeuralNetwork
 
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, 'data/dataset.txt')
@@ -16,19 +15,18 @@ otherOption = 1
 
 
 def main(argv):
-    layers = [3, 5, 5, 1]
+    layers = [3, 3, 1]
     activation, cost, problem, tuning, update = read_opts(argv)
     data_test, data_train = prepare_data(problem, tuning, layers[0])
-    for i in range(2):
-        nn = NeuralNetwork(layers, len(data_train))
-        print("weights for test {:d}:".format(i))
-        # print(nn.weights)
-        print("deltas: ")
-        # print(nn.deltas)
-        print("testing: ")
-        train(nn, data_train)
-        list(map(plt.plot, nn.errors))
-        plt.show()
+
+    nn = NeuralNetwork(layers, [list() for _ in range(len(data_train))])
+    for i in range(50 * len(data_train)):
+        index = i % len(data_train)
+        nn.test(data_train[index], index)
+
+    list(map(print, nn.feedforward([5.1, 3.5, 1.4])))
+    list(map(print, nn.feedforward([4.9, 3.0, 1.4])))
+    list(map(print, nn.feedforward([4.7, 3.2, 1.3])))
 
 
 # nn.test(data_test[t % len(data_test)])
@@ -50,7 +48,6 @@ def train(nn, inputs, dynamic=False, classification=True):
             nn.feedforward(value[0])
             nn.backprop(value[1], idx)
             nn.update_weights()
-
 
 
 def prepare_data(problem, tuning, input_size=3):
