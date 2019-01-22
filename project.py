@@ -5,7 +5,7 @@ import sys
 import numpy as np
 import scipy
 
-from src.sp_nn import NeuralNetwork
+from src.SpatiallyConstrainedNN import NeuralNetwork
 
 dirname = os.path.dirname(__file__)
 filename = os.path.join(dirname, 'data/dataset.txt')
@@ -27,15 +27,6 @@ def main(argv):
     list(map(print, nn.feedforward([5.1, 3.5, 1.4])))
     list(map(print, nn.feedforward([4.9, 3.0, 1.4])))
     list(map(print, nn.feedforward([4.7, 3.2, 1.3])))
-
-
-# nn.test(data_test[t % len(data_test)])
-
-#
-# list(map(print, nn.feedforward([0, 0])))
-# list(map(print, nn.feedforward([0, 1])))
-# list(map(print, nn.feedforward([1, 0])))
-# list(map(print, nn.feedforward([1, 1])))
 
 
 def train(nn, inputs, dynamic=False, classification=True):
